@@ -6,10 +6,7 @@
 //  Copyright (c) 2013年 kevinzhow. All rights reserved.
 //
 
-#import "PNCircleChart.h"
-
-@interface PNCircleChart ()
-@end
+#import "PNChart/PNCircleChart.h"
 
 @implementation PNCircleChart
 
@@ -244,7 +241,7 @@ displayCountingLabel:(BOOL)displayCountingLabel
 
 - (void)addAnimationIfNeeded
 {
-    double percentageValue = [_current floatValue]/([_total floatValue]/100.0);
+    double percentageValue = (_current.floatValue / _total.floatValue) * 100.0f;
     
     if (self.displayAnimated) {
         CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
@@ -253,14 +250,18 @@ displayCountingLabel:(BOOL)displayCountingLabel
         pathAnimation.fromValue = @(0.0f);
         pathAnimation.toValue = @([_current floatValue] / [_total floatValue]);
         [_circle addAnimation:pathAnimation forKey:@"strokeEndAnimation"];
-        [_countingLabel countFrom:0 to:percentageValue withDuration:self.duration];
-        
+        if(_displayCountingLabel)
+        {
+            [_countingLabel countFrom:0 to:percentageValue withDuration:self.duration];
+        }
         if (self.gradientMask && _strokeColorGradientStart) {
             [self.gradientMask addAnimation:pathAnimation forKey:@"strokeEndAnimation"];
         }
     }
     else {
-        [_countingLabel countFrom:percentageValue to:percentageValue withDuration:self.duration];
+        if (_displayCountingLabel) {
+            [_countingLabel countFrom:percentageValue to:percentageValue withDuration:self.duration];
+        }
     }
 }
 
